@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.github.weisj.jsvg.parser.css.CssParser;
+import com.github.weisj.jsvg.parser.css.StyleSheet;
 import com.github.weisj.jsvg.parser.impl.*;
 import com.github.weisj.jsvg.parser.resources.ResourceLoader;
 import com.github.weisj.jsvg.parser.resources.ResourcePolicy;
@@ -54,6 +55,16 @@ public interface LoaderContext {
 
     @NotNull
     DocumentLimits documentLimits();
+
+    /**
+     * Returns an optional external stylesheet that will be applied to all loaded SVG documents.
+     * The external stylesheet is applied with the highest priority, after all internal style sheets,
+     * allowing it to override styles defined within SVG documents.
+     *
+     * @return the external stylesheet, or null if none is set
+     */
+    @Nullable
+    StyleSheet externalStyleSheet();
 
     static @NotNull Builder builder() {
         return MutableLoaderContext.createDefault();
@@ -86,6 +97,16 @@ public interface LoaderContext {
         @NotNull
         Builder documentLimits(@NotNull DocumentLimits documentLimits);
 
+        /**
+         * Sets an external stylesheet to be applied to all loaded SVG documents.
+         * This stylesheet is applied with the highest priority (after internal style sheets),
+         * allowing it to override styles defined within SVG documents.
+         *
+         * @param styleSheet the external stylesheet to apply, or null to disable
+         * @return this builder for chaining
+         */
+        @NotNull
+        Builder externalStyleSheet(@Nullable StyleSheet styleSheet);
 
         @NotNull
         LoaderContext build();

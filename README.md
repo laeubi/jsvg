@@ -156,6 +156,197 @@ Supported custom rendering hints are:
 
 All are exposed through the `SVGRenderingHints`class.
 
+### CSS Styling
+
+JSVG supports CSS styling through `<style>` elements, allowing you to apply styles to SVG elements using CSS rules. The CSS parser supports basic selectors and common SVG presentation attributes.
+
+#### Supported Selectors
+
+JSVG supports the following CSS selector types:
+
+- **Tag selectors**: Apply styles to all elements of a specific type
+  ```css
+  rect { fill: blue; }
+  circle { stroke: red; stroke-width: 2; }
+  ```
+
+- **Class selectors**: Apply styles to elements with a specific class
+  ```css
+  .my-class { fill: green; }
+  .highlighted { stroke: yellow; }
+  ```
+
+- **ID selectors**: Apply styles to a specific element by ID
+  ```css
+  #my-element { fill: purple; }
+  ```
+
+#### Multiple Selectors
+
+You can apply the same styles to multiple selectors by separating them with commas:
+
+```css
+rect, circle, ellipse {
+    stroke: black;
+    stroke-width: 1;
+}
+```
+
+#### Multiple Classes
+
+Elements can have multiple classes, and all matching class rules will be applied:
+
+```xml
+<rect class="box highlighted" />
+```
+
+```css
+.box { fill: blue; }
+.highlighted { stroke: yellow; stroke-width: 3; }
+```
+
+#### Multiple Style Sheets
+
+SVG documents can contain multiple `<style>` elements. Later style sheets can override rules from earlier ones:
+
+```xml
+<style>
+  .box { fill: blue; }
+</style>
+<style>
+  .box { fill: red; } <!-- This will override the blue fill -->
+</style>
+```
+
+#### CSS Precedence
+
+JSVG follows standard CSS precedence rules (from lowest to highest priority):
+
+1. Tag selectors (e.g., `rect`)
+2. Class selectors (e.g., `.my-class`)
+3. ID selectors (e.g., `#my-id`)
+4. Inline `style` attribute (highest priority)
+
+```xml
+<style>
+  rect { fill: blue; }          <!-- Lowest priority -->
+  .my-class { fill: green; }    <!-- Medium priority -->
+  #my-rect { fill: purple; }    <!-- High priority -->
+</style>
+
+<!-- The fill will be red due to inline style -->
+<rect id="my-rect" class="my-class" style="fill: red;" />
+```
+
+#### Supported CSS Properties
+
+JSVG supports most common SVG presentation attributes as CSS properties:
+
+- **Fill properties**: `fill`, `fill-opacity`, `fill-rule`
+- **Stroke properties**: `stroke`, `stroke-width`, `stroke-opacity`, `stroke-linecap`, `stroke-linejoin`, `stroke-dasharray`, `stroke-dashoffset`
+- **Text properties**: `font-family`, `font-size`, `font-weight`, `font-style`, `text-anchor`
+- **Opacity**: `opacity`
+- **Display**: `display`, `visibility`
+- **Transform**: `transform`
+- And many more standard SVG attributes
+
+#### Example
+
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <style>
+        .shape {
+            stroke: black;
+            stroke-width: 2;
+        }
+        
+        .blue-fill {
+            fill: #4A90E2;
+        }
+        
+        .red-fill {
+            fill: #E74C3C;
+        }
+        
+        #special {
+            fill: purple;
+            stroke: gold;
+            stroke-width: 3;
+        }
+        
+        text {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            fill: #333;
+        }
+    </style>
+    
+    <rect x="50" y="50" width="100" height="100" class="shape blue-fill" />
+    <circle cx="250" cy="100" r="50" class="shape red-fill" />
+    <rect x="50" y="200" width="100" height="50" id="special" />
+    <text x="200" y="280" text-anchor="middle">Styled with CSS</text>
+</svg>
+```
+
+#### External CSS Injection
+
+JSVG allows you to inject external CSS stylesheets at load time via the `LoaderContext`. This is useful when:
+
+- Multiple SVG files share the same style classes and you want to apply consistent styling
+- You need to allow user customization of SVG styles without modifying the SVG files
+- You want to apply theme-specific styles to SVGs
+
+External stylesheets are applied with the **highest priority** (after internal `<style>` elements), allowing them to override styles defined within SVG documents.
+
+**Example:**
+
+```java
+// Parse external CSS
+SimpleCssParser cssParser = new SimpleCssParser();
+String externalCss = """
+    .my-class {
+        fill: blue;
+        stroke: red;
+    }
+    #special {
+        fill: green;
+    }
+    """;
+var externalStyleSheet = cssParser.parse(
+    Collections.singletonList(externalCss.toCharArray()));
+
+// Load SVG with external stylesheet
+LoaderContext context = LoaderContext.builder()
+        .externalStyleSheet(externalStyleSheet)
+        .build();
+
+SVGDocument document = loader.load(svgUrl, context);
+```
+
+Now any SVG loaded with this context will have the external CSS styles applied. The same SVG file can be styled differently by loading it with different external stylesheets.
+
+**Use Case Example:**
+
+```java
+// Load same SVG with different themes
+SVGDocument lightTheme = loader.load(svgUrl, 
+    LoaderContext.builder()
+        .externalStyleSheet(lightThemeStyles)
+        .build());
+
+SVGDocument darkTheme = loader.load(svgUrl,
+    LoaderContext.builder()
+        .externalStyleSheet(darkThemeStyles)
+        .build());
+```
+
+#### Limitations
+
+- Complex selectors (descendant, child, attribute selectors, pseudo-classes, etc.) are not supported
+- CSS animations and transitions are not supported (use SVG `<animate>` elements instead)
+- Media queries and CSS imports are not supported
+- CSS variables (custom properties) are not supported
+
 ### Animations
 
 The current support for animations is limited and in an experimental state.
@@ -293,13 +484,13 @@ For supported elements most of the attributes which apply to them are implemente
 
 | Element         | Status                  |
 |-----------------|-------------------------|
-| desc            | ( :white_check_mark: )  |
-| title           | ( :white_check_mark: )  |
-| metadata        | ( :white_check_mark: )  |
-| color-profile   | :x:                     |
-| :warning:cursor | :x:                     |
-| script          | :x:                     |
-| style           | :ballot_box_with_check: |
+| desc            | ( :white_check_mark: )                    |
+| title           | ( :white_check_mark: )                    |
+| metadata        | ( :white_check_mark: )                    |
+| color-profile   | :x:                                       |
+| :warning:cursor | :x:                                       |
+| script          | :x:                                       |
+| style           | :white_check_mark: (basic selectors only) |
 
 
 ## Usage examples

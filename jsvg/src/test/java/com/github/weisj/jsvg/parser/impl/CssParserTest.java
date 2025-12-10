@@ -153,4 +153,16 @@ class CssParserTest {
     void selectorTypes() {
         assertEquals(SUCCESS, compareImages("css/selectorTypes.svg"));
     }
+
+    @Test
+    void cssExample() {
+        // Just verify the CSS example parses correctly without errors
+        assertDoesNotThrow(() -> {
+            var loader = new com.github.weisj.jsvg.parser.SVGLoader();
+            var url = CssParserTest.class.getResource("/com/github/weisj/jsvg/css/cssExample.svg");
+            assertNotNull(url, "cssExample.svg should exist");
+            var doc = loader.load(url);
+            assertNotNull(doc, "Document should be loaded");
+        });
+    }
 }
