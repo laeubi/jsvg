@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+    <!-- Example demonstrating CSS styling with JSVG -->
+    
+    <style>
+        /* Class selector for rectangles */
+        .blue-box {
+            fill: #4A90E2;
+            stroke: #2E5C8A;
+            stroke-width: 3;
+        }
+        
+        /* Class selector for circles */
+        .red-circle {
+            fill: #E74C3C;
+            stroke: #C0392B;
+            stroke-width: 2;
+        }
+        
+        /* ID selector */
+        #special-rect {
+            fill: #9B59B6;
+            stroke: #8E44AD;
+            stroke-width: 4;
+        }
+        
+        /* Tag selector for all paths */
+        path {
+            fill: #F39C12;
+            stroke: #E67E22;
+            stroke-width: 2;
+        }
+        
+        /* Multiple classes */
+        .green-fill {
+            fill: #2ECC71;
+        }
+        
+        .thick-stroke {
+            stroke: #27AE60;
+            stroke-width: 5;
+        }
+        
+        /* Text styling */
+        text {
+            fill: #34495E;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            fill: #2C3E50;
+        }
+    </style>
+    
+    <!-- Title -->
+    <text x="300" y="30" text-anchor="middle" class="title">CSS Styling Example</text>
+    
+    <!-- Class selector examples -->
+    <rect x="50" y="50" width="100" height="80" class="blue-box"/>
+    <text x="100" y="145" text-anchor="middle">.blue-box</text>
+    
+    <circle cx="250" cy="90" r="40" class="red-circle"/>
+    <text x="250" y="145" text-anchor="middle">.red-circle</text>
+    
+    <!-- ID selector example -->
+    <rect x="350" y="50" width="100" height="80" id="special-rect"/>
+    <text x="400" y="145" text-anchor="middle">#special-rect</text>
+    
+    <!-- Tag selector example -->
+    <path d="M 50 200 L 150 200 L 100 260 Z"/>
+    <text x="100" y="280" text-anchor="middle">path tag</text>
+    
+    <!-- Multiple classes -->
+    <ellipse cx="250" cy="230" rx="60" ry="40" class="green-fill thick-stroke"/>
+    <text x="250" y="285" text-anchor="middle">multiple classes</text>
+    
+    <!-- Inline style (highest priority) -->
+    <rect x="350" y="190" width="100" height="80" class="blue-box" style="fill: #E91E63"/>
+    <text x="400" y="285" text-anchor="middle">inline override</text>
+    
+    <!-- Legend -->
+    <text x="50" y="330" font-size="14">Legend:</text>
+    <text x="50" y="350" font-size="12">• Class selectors (.classname)</text>
+    <text x="50" y="370" font-size="12">• ID selectors (#id)</text>
+    <text x="50" y="390" font-size="12">• Tag selectors (rect, circle, path, etc.)</text>
+    <text x="350" y="350" font-size="12">• Multiple style sheets supported</text>
+    <text x="350" y="370" font-size="12">• Inline styles have highest priority</text>
+    <text x="350" y="390" font-size="12">• Common properties: fill, stroke, etc.</text>
+</svg>
