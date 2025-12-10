@@ -288,6 +288,58 @@ JSVG supports most common SVG presentation attributes as CSS properties:
 </svg>
 ```
 
+#### External CSS Injection
+
+JSVG allows you to inject external CSS stylesheets at load time via the `LoaderContext`. This is useful when:
+
+- Multiple SVG files share the same style classes and you want to apply consistent styling
+- You need to allow user customization of SVG styles without modifying the SVG files
+- You want to apply theme-specific styles to SVGs
+
+External stylesheets are applied with the **highest priority** (after internal `<style>` elements), allowing them to override styles defined within SVG documents.
+
+**Example:**
+
+```java
+// Parse external CSS
+SimpleCssParser cssParser = new SimpleCssParser();
+String externalCss = """
+    .my-class {
+        fill: blue;
+        stroke: red;
+    }
+    #special {
+        fill: green;
+    }
+    """;
+var externalStyleSheet = cssParser.parse(
+    Collections.singletonList(externalCss.toCharArray()));
+
+// Load SVG with external stylesheet
+LoaderContext context = LoaderContext.builder()
+        .externalStyleSheet(externalStyleSheet)
+        .build();
+
+SVGDocument document = loader.load(svgUrl, context);
+```
+
+Now any SVG loaded with this context will have the external CSS styles applied. The same SVG file can be styled differently by loading it with different external stylesheets.
+
+**Use Case Example:**
+
+```java
+// Load same SVG with different themes
+SVGDocument lightTheme = loader.load(svgUrl, 
+    LoaderContext.builder()
+        .externalStyleSheet(lightThemeStyles)
+        .build());
+
+SVGDocument darkTheme = loader.load(svgUrl,
+    LoaderContext.builder()
+        .externalStyleSheet(darkThemeStyles)
+        .build());
+```
+
 #### Limitations
 
 - Complex selectors (descendant, child, attribute selectors, pseudo-classes, etc.) are not supported

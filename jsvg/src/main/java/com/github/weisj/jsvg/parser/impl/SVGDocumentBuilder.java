@@ -155,13 +155,17 @@ public final class SVGDocumentBuilder {
     }
 
     private void processStyleSheets() {
-        if (styleElements.isEmpty()) return;
+        if (styleElements.isEmpty() && loaderContext.externalStyleSheet() == null) return;
         CssParser cssParser = loaderContext.cssParser();
         for (ParsedElement styleElement : styleElements) {
             styleElement.build(0);
             Style styleNode = (Style) styleElement.node();
             styleNode.parseStyleSheet(cssParser);
             styleSheets.add(styleNode.styleSheet());
+        }
+        // Add external stylesheet last so it has highest priority
+        if (loaderContext.externalStyleSheet() != null) {
+            styleSheets.add(loaderContext.externalStyleSheet());
         }
     }
 

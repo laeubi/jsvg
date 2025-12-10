@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import com.github.weisj.jsvg.paint.impl.DefaultPaintParser;
 import com.github.weisj.jsvg.parser.*;
 import com.github.weisj.jsvg.parser.css.CssParser;
+import com.github.weisj.jsvg.parser.css.StyleSheet;
 import com.github.weisj.jsvg.parser.css.impl.SimpleCssParser;
 import com.github.weisj.jsvg.parser.resources.ResourceLoader;
 import com.github.weisj.jsvg.parser.resources.ResourcePolicy;
@@ -47,6 +48,7 @@ public final class MutableLoaderContext implements LoaderContext, LoaderContext.
     private @NotNull ElementLoader elementLoader = DEFAULT_ELEMENT_LOADER;
     private @NotNull ResourcePolicy resourcePolicy = ResourcePolicy.DENY_EXTERNAL;
     private @NotNull DocumentLimits documentLimits = DocumentLimits.DEFAULT;
+    private @Nullable StyleSheet externalStyleSheet = null;
 
     public static @NotNull MutableLoaderContext createDefault() {
         return new MutableLoaderContext();
@@ -88,6 +90,11 @@ public final class MutableLoaderContext implements LoaderContext, LoaderContext.
     }
 
     @Override
+    public @Nullable StyleSheet externalStyleSheet() {
+        return externalStyleSheet;
+    }
+
+    @Override
     public @NotNull Builder preProcessor(@Nullable DomProcessor preProcessor) {
         this.preProcessor = preProcessor;
         return this;
@@ -126,6 +133,12 @@ public final class MutableLoaderContext implements LoaderContext, LoaderContext.
     @Override
     public @NotNull Builder documentLimits(@NotNull DocumentLimits documentLimits) {
         this.documentLimits = documentLimits;
+        return this;
+    }
+
+    @Override
+    public @NotNull Builder externalStyleSheet(@Nullable StyleSheet styleSheet) {
+        this.externalStyleSheet = styleSheet;
         return this;
     }
 
